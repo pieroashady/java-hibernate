@@ -1,15 +1,14 @@
 package com.aldi.hibernate;
 
-import java.util.Date;
+import java.util.List;
 
 import com.aldi.hibernate.entity.Student;
-import com.aldi.hibernate.utils.DateUtils;
 
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
 
-public class CreateStudent {
+public class DeleteStudent {
     public static void main(String[] args) {
 
         SessionFactory factory = new Configuration().configure("hibernate.cfg.xml").addAnnotatedClass(Student.class)
@@ -18,20 +17,21 @@ public class CreateStudent {
         Session session = factory.getCurrentSession();
 
         try {
-            System.out.println("creating new student object...");
+            int studentId = 1;
 
-            String theDateOfBirthStr = "22/05/1999";
-            Date theDateOfBirth = DateUtils.parseDate(theDateOfBirthStr);
-
-            Student student = new Student("Piero", "Ashady", "piero@gmail.com", null);
-
+            session = factory.getCurrentSession();
             session.beginTransaction();
-            session.save(student);
+
+            Student student = session.get(Student.class, studentId);
+            session.delete(student);
+
             session.getTransaction().commit();
 
-            System.out.println("Done!");
+            System.out.println("Done");
+
         } catch (Exception e) {
             e.printStackTrace();
+            factory.close();
         } finally {
             factory.close();
         }

@@ -1,15 +1,14 @@
 package com.aldi.hibernate;
 
-import java.util.Date;
+import java.util.List;
 
 import com.aldi.hibernate.entity.Student;
-import com.aldi.hibernate.utils.DateUtils;
 
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
 
-public class CreateStudent {
+public class QueryStudentDemo {
     public static void main(String[] args) {
 
         SessionFactory factory = new Configuration().configure("hibernate.cfg.xml").addAnnotatedClass(Student.class)
@@ -20,18 +19,27 @@ public class CreateStudent {
         try {
             System.out.println("creating new student object...");
 
-            String theDateOfBirthStr = "22/05/1999";
-            Date theDateOfBirth = DateUtils.parseDate(theDateOfBirthStr);
-
-            Student student = new Student("Piero", "Ashady", "piero@gmail.com", null);
-
             session.beginTransaction();
-            session.save(student);
+
+            List<Student> students = session.createQuery("from Student").getResultList();
+
+            for (Student student : students) {
+                System.out.println(student.getEmail());
+            }
+
+            List<Student> students2 = session.createQuery("from Student s where s.lastName='Ashady'").getResultList();
+
+            for (Student student : students2) {
+                System.out.println(student.getLastName());
+            }
+
             session.getTransaction().commit();
 
             System.out.println("Done!");
+
         } catch (Exception e) {
             e.printStackTrace();
+            factory.close();
         } finally {
             factory.close();
         }

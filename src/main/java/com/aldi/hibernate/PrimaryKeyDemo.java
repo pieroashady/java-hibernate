@@ -1,6 +1,10 @@
 package com.aldi.hibernate;
 
+import java.util.Date;
+import java.util.List;
+
 import com.aldi.hibernate.entity.Student;
+import com.aldi.hibernate.utils.DateUtils;
 
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -17,9 +21,12 @@ public class PrimaryKeyDemo {
         try {
             System.out.println("creating new student object...");
 
-            Student student = new Student("Piero", "Ashady", "piero@gmail.com");
-            Student student2 = new Student("Fajar", "Ashady", "fajar@gmail.com");
-            Student student3 = new Student("Zikri", "Ashady", "zikri@gmail.com");
+            String theDateOfBirthStr = "31/12/1998";
+            Date theDateOfBirth = DateUtils.parseDate(theDateOfBirthStr);
+
+            Student student = new Student("Piero", "Ashady", "piero@gmail.com", theDateOfBirth);
+            Student student2 = new Student("Fajar", "Ashady", "fajar@gmail.com", theDateOfBirth);
+            Student student3 = new Student("Zikri", "Ashady", "zikri@gmail.com", theDateOfBirth);
 
             session.beginTransaction();
 
@@ -33,9 +40,11 @@ public class PrimaryKeyDemo {
             session.beginTransaction();
 
             // student = session.get(Student.class, student.getId());
-            student = session.get(Student.class, 3);
+            // student = session.get(Student.class, 3);
+            List<Student> students = session.createQuery("from student").getResultList();
 
-            System.out.println(student.getId() + " " + student.getFirstName());
+            // System.out.println(student.getId() + " " + student.getFirstName());
+            System.out.println(students);
 
             session.getTransaction().commit();
 
@@ -43,6 +52,7 @@ public class PrimaryKeyDemo {
 
         } catch (Exception e) {
             e.printStackTrace();
+            factory.close();
         } finally {
             factory.close();
         }
